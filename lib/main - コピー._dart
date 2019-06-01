@@ -1,0 +1,74 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+
+void main() => runApp(new CameraApp());
+
+class CameraApp extends StatefulWidget {
+  @override
+  _CameraAppState createState() => _CameraAppState();
+}
+
+class _CameraAppState extends State<CameraApp> {
+  File image;
+  var decodeImage;
+  var imageBytes;
+
+//  To use Gallery or File Manager to pick Image
+//  Comment Line No. 19 and uncomment Line number 20
+  picker() async {
+    print('Picker is called');
+//    File img = await ImagePicker.pickImage(source: ImageSource.camera);
+    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (img != null) {
+      image = img;
+      // Convert to
+      List<int> imageBytes = image.readAsBytesSync();
+      String base64Image = base64Encode(imageBytes);
+      setState(() {
+        imageBytes = imageBytes;
+      });
+      var decodeImage = base64Decode(base64Image);
+      setState(() {
+        decodeImage = decodeImage;
+      });
+      print("byte image = ");
+      print(imageBytes);
+      print("encode image = ");
+      print(base64Image);
+      print("decode image = ");
+      print(new Image.memory(decodeImage));
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      home: new Scaffold(
+        appBar: new AppBar(
+          title: new Text('Image Picker'),
+        ),
+        body: new Container(
+          child: new Center(
+              child: Container(
+            decoration: new BoxDecoration(
+              image: image == null
+                  ? null
+                  : new DecorationImage(
+                      image: new MemoryImage(imageBytes),
+                    ),
+            ),
+          )
+              //: new Image.memory(decodeImage),
+              ),
+        ),
+        floatingActionButton: new FloatingActionButton(
+          onPressed: picker,
+          child: new Icon(Icons.camera_alt),
+        ),
+      ),
+    );
+  }
+}
